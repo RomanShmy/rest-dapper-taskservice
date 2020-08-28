@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "MA94UCyQDMKN/AbpIZMChkeIWzqn6TOEqF8DBcnRU9FaIHTmoesgnuV00pr0AcW30jH3hCQBj3yy1N01ATrLcg==",
+  "success": true,
+  "projectFilePath": "/Users/roman/Desktop/interlink/rest-dapper-task/rest-dapper-task.csproj",
+  "expectedPackageFiles": [
+    "/Users/roman/.nuget/packages/dapper/2.0.35/dapper.2.0.35.nupkg.sha512",
+    "/Users/roman/.nuget/packages/npgsql/4.1.4/npgsql.4.1.4.nupkg.sha512",
+    "/Users/roman/.nuget/packages/system.reflection.emit.lightweight/4.7.0/system.reflection.emit.lightweight.4.7.0.nupkg.sha512",
+    "/Users/roman/.nuget/packages/system.runtime.compilerservices.unsafe/4.6.0/system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}
