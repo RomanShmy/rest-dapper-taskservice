@@ -28,9 +28,10 @@ namespace rest_dapper_task
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            var connectionString = new ConnectionString(Configuration.GetConnectionString("DefaultConnection"));  
-            services.AddSingleton(connectionString); 
+            var connectionString = new ConnectionString(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddSingleton(connectionString);
             services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<IToDoListRepository, ToDoListRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,10 +48,7 @@ namespace rest_dapper_task
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -16,74 +16,107 @@ namespace rest_dapper_task.Repositories
             this.connectionString = connectionString;
         }
 
-        public Task DeleteTask(int id)
+        public Task DeleteTask(int taksId, int listId)
         {
-            string query = "delete from task_app.tasks where id = @Id returning *;";
-            using(var connection = new NpgsqlConnection(connectionString.Value))
+            if (!IsPresent(taksId))
             {
-                var task = connection.QueryFirst<Task>(query, new {Id = id});
+                return null;
+            }
+
+            string query =
+                "delete from task_app.tasks where id = @TaskId and todolist_id = @ListId returning id, name, done;";
+            using (var connection = new NpgsqlConnection(connectionString.Value))
+            {
+                var task = connection.QueryFirst<Task>(query, new {TaskId = taksId, ListId = listId});
                 return task;
             }
         }
 
-        public Task EditDone(int id, Task task)
+        public Task EditDone(int listId, int taskId, Task task)
         {
-            string query = "update task_app.tasks set done = @Done where id = @Id returning *;";
-            using(var connection = new NpgsqlConnection(connectionString.Value))
+            if (!IsPresent(taskId))
             {
-                var taskResult = connection.QueryFirst(query, new {Id = id, Done = task.Done});
+                return null;
+            }
+
+            string query =
+                "update task_app.tasks set done = @Done where id = @TaskId and todolist_id = @ListId returning id, name, done;";
+            using (var connection = new NpgsqlConnection(connectionString.Value))
+            {
+                var taskResult =
+                    connection.QueryFirst<Task>(query, new {TaskId = taskId, ListId = listId, Done = task.Done});
                 return taskResult;
             }
         }
 
         public Task GetTask(int id)
         {
-            if(!IsPresent(id))
+            if (!IsPresent(id))
             {
                 return null;
             }
 
             string query = "select * from task_app.tasks where id = @Id;";
-            using(var connection = new NpgsqlConnection(connectionString.Value))
-            {   
-                var task = connection.QueryFirstOrDefault<Task>(query, new {Id = id}); 
+            using (var connection = new NpgsqlConnection(connectionString.Value))
+            {
+                var task = connection.QueryFirstOrDefault<Task>(query, new {Id = id});
                 return task;
             }
- 
         }
 
         public List<Task> GetTasks()
         {
             string query = "select * from task_app.tasks;";
-            List<Task> tasks = new List<Task>();
-            using(var connection = new NpgsqlConnection(connectionString.Value))
+            using (var connection = new NpgsqlConnection(connectionString.Value))
             {
-                tasks.AddRange(connection.Query<Task>(query));
-                return tasks;
+                var tasks = connection.Query<Task>(query);
+                return tasks.AsList();
             }
         }
 
-        //TODO: correct relationship objects
-        // public Task SaveTask(Task task)
-        // {
-        //     string query = "insert into task_app.tasks (name, done, todolist_id) values (@Name, @Done, @todolist_id) returning id;";
-        //     using(var connection = new NpgsqlConnection(connectionString.Value))
-        //     {
-                
-        //         var id = connection.QueryFirst<int>(query, new {Name = task.Name, Done = task.Done, todolist_id = 3});
-        //         task.Id = id;
-        //         return task;
-        //     }
-        // }
 
-        public bool IsPresent(int id)
+        public bool IsPresentInList(int taskId, int listId)
+        {
+            string query = "select todolist_id from task_app.tasks where id = @Id;";
+            if (!IsPresent(taskId))
+            {
+                return false;
+            }
+
+            using (var connection = new NpgsqlConnection(connectionString.Value))
+            {
+                var id = connection.QueryFirst<int>(query, new {Id = taskId});
+                if (id != listId)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public Task SaveTask(int todolist_id, Task task)
+        {
+            string query =
+                "insert into task_app.tasks (name, done, todolist_id) values (@Name, @Done, @ToDoId) returning id;";
+            using (var connection = new NpgsqlConnection(connectionString.Value))
+            {
+                var id = connection.QueryFirst<int>(query,
+                    new {Name = task.Name, Done = task.Done, ToDoId = todolist_id});
+                task.Id = id;
+                return task;
+            }
+        }
+
+        private bool IsPresent(int id)
         {
             bool result = true;
-            string query = "select exists(select 1 from fef.tasks where id = @Id);";
-            using(var connection = new NpgsqlConnection(connectionString.Value))
+            string query = "select exists(select 1 from task_app.tasks where id = @Id);";
+            using (var connection = new NpgsqlConnection(connectionString.Value))
             {
                 result = connection.QueryFirst<bool>(query, new {Id = id});
             }
+
             return result;
         }
     }

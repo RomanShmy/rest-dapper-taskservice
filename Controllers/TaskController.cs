@@ -33,8 +33,5 @@ namespace rest_dapper_task.Controllers
 
             return Ok(task);
         }
-
-        
-
     }
 }

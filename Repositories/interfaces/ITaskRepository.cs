@@ -7,9 +7,9 @@ namespace rest_dapper_task.Repositories.interfaces
     {
         List<Task> GetTasks();
         Task GetTask(int id);
-        // Task SaveTask(Task task);
-        Task EditDone(int id, Task task);
-        Task DeleteTask(int id);
-        bool IsPresent(int id);
+        Task SaveTask(int todolist_id, Task task);
+        Task EditDone(int listId, int taskId, Task task);
+        Task DeleteTask(int taskId, int listId);
+        bool IsPresentInList(int taskId, int listId);
     }
 }
